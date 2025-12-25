@@ -1,0 +1,409 @@
+/* ========== RESPONSIVE FIXES & IMPROVEMENTS ========== */
+
+/* Remove excessive animations */
+* {
+    animation: none !important;
+}
+
+/* Only keep essential transitions */
+button, a, input, select, textarea {
+    transition: background-color 0.2s, color 0.2s, border-color 0.2s, transform 0.2s !important;
+}
+
+/* ========== CLEANPRO SITE IMPROVEMENTS ========== */
+
+/* Improve feedback and quick order sections */
+.testimonial-form, .quick-order {
+    background: linear-gradient(135deg, #2E8B57 0%, #1e6b47 100%) !important;
+    padding: 40px !important;
+    border-radius: 15px !important;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15) !important;
+    color: white !important;
+}
+
+.testimonial-form h3, .quick-order h3 {
+    color: white !important;
+    margin-bottom: 25px !important;
+    font-size: 1.8rem !important;
+}
+
+.testimonial-form .form-control, .quick-order .form-control {
+    background: rgba(255,255,255,0.95) !important;
+    border: 2px solid rgba(255,255,255,0.3) !important;
+    color: #333 !important;
+}
+
+.testimonial-form .form-control:focus, .quick-order .form-control:focus {
+    background: white !important;
+    border-color: #FFD700 !important;
+    box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.2) !important;
+}
+
+.testimonial-form .btn-primary, .quick-order .btn-primary {
+    background: #FFD700 !important;
+    color: #2E8B57 !important;
+    font-weight: 700 !important;
+    padding: 15px 30px !important;
+    border-radius: 10px !important;
+    box-shadow: 0 5px 15px rgba(255, 215, 0, 0.3) !important;
+}
+
+.testimonial-form .btn-primary:hover, .quick-order .btn-primary:hover {
+    background: #ffed4e !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 7px 20px rgba(255, 215, 0, 0.4) !important;
+}
+
+/* Fix order/statistics section overlap on mobile */
+@media (max-width: 768px) {
+    .hero-container {
+        flex-direction: column !important;
+    }
+    
+    .hero-content, .hero-image {
+        width: 100% !important;
+    }
+    
+    .order-form {
+        margin-top: 30px !important;
+        width: 100% !important;
+    }
+    
+    .stats {
+        flex-wrap: wrap !important;
+        gap: 15px !important;
+        padding: 20px !important;
+    }
+    
+    .stat-item {
+        flex: 1 1 calc(50% - 10px) !important;
+        min-width: 140px !important;
+    }
+    
+    .testimonials-container {
+        flex-direction: column !important;
+    }
+    
+    .testimonial-form {
+        margin-top: 30px !important;
+        width: 100% !important;
+    }
+    
+    .contact-container {
+        flex-direction: column !important;
+    }
+    
+    .quick-order {
+        margin-top: 30px !important;
+        width: 100% !important;
+    }
+}
+
+/* ========== ADMIN SITE IMPROVEMENTS ========== */
+
+/* Fix button sizes - make them consistent */
+.admin-header .btn, .section-actions .btn {
+    padding: 10px 20px !important;
+    font-size: 14px !important;
+    border-radius: 8px !important;
+    height: auto !important;
+    min-height: 38px !important;
+    margin: 0 5px !important;
+}
+
+.section-actions {
+    display: flex !important;
+    gap: 10px !important;
+    flex-wrap: wrap !important;
+    align-items: center !important;
+}
+
+.action-buttons button {
+    padding: 8px 12px !important;
+    font-size: 13px !important;
+    min-width: auto !important;
+    width: auto !important;
+    margin: 0 3px !important;
+}
+
+/* Status dropdown - like language switcher */
+.status-dropdown {
+    position: relative !important;
+    display: inline-block !important;
+}
+
+.status-dropdown-btn {
+    transition: all 0.2s !important;
+    border-radius: 8px !important;
+    font-weight: 600 !important;
+}
+
+.status-dropdown-btn:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15) !important;
+}
+
+.status-dropdown-menu {
+    animation: fadeIn 0.2s ease !important;
+    border-radius: 10px !important;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2) !important;
+}
+
+.status-option {
+    transition: all 0.2s !important;
+    border-radius: 0 !important;
+}
+
+.status-option:first-child {
+    border-top-left-radius: 10px !important;
+    border-top-right-radius: 10px !important;
+}
+
+.status-option:last-child {
+    border-bottom-left-radius: 10px !important;
+    border-bottom-right-radius: 10px !important;
+}
+
+.status-option:hover {
+    background: #f8f9fa !important;
+    padding-left: 25px !important;
+    color: #667eea !important;
+}
+
+.status-option.active {
+    background: #f0f4ff !important;
+    color: #667eea !important;
+    font-weight: 600 !important;
+}
+
+.status-option.active i.fa-check {
+    display: inline !important;
+    color: #667eea !important;
+}
+
+/* Improve table buttons */
+table .action-buttons {
+    display: flex !important;
+    gap: 8px !important;
+    flex-wrap: nowrap !important;
+    justify-content: center !important;
+}
+
+table .action-buttons button {
+    padding: 8px 12px !important;
+    font-size: 13px !important;
+    min-width: 40px !important;
+    margin: 0 !important;
+}
+
+/* Modal buttons */
+.modal-content .btn {
+    padding: 12px 24px !important;
+    font-size: 14px !important;
+    min-width: 100px !important;
+}
+
+/* ========== RESPONSIVE DESIGN ========== */
+
+/* Mobile First Approach */
+@media (max-width: 576px) {
+    /* Cleanpro Site */
+    .header-content {
+        flex-wrap: wrap !important;
+        gap: 10px !important;
+    }
+    
+    .lang-dropdown {
+        order: 3 !important;
+        width: 100% !important;
+    }
+    
+    .nav-center {
+        width: 100% !important;
+    }
+    
+    .hero-content h2 {
+        font-size: 24px !important;
+    }
+    
+    .services-grid {
+        grid-template-columns: 1fr !important;
+    }
+    
+    .stat-item {
+        flex: 1 1 100% !important;
+    }
+    
+    /* Admin Site */
+    .admin-sidebar {
+        width: 100% !important;
+        position: fixed !important;
+        left: -100% !important;
+        transition: left 0.3s !important;
+        z-index: 1000 !important;
+    }
+    
+    .admin-sidebar.show {
+        left: 0 !important;
+    }
+    
+    .admin-content {
+        margin-left: 0 !important;
+        width: 100% !important;
+    }
+    
+    .admin-header {
+        padding: 15px !important;
+        flex-wrap: wrap !important;
+    }
+    
+    .section-content {
+        padding: 15px !important;
+        margin: 10px !important;
+    }
+    
+    table {
+        font-size: 12px !important;
+    }
+    
+    table th, table td {
+        padding: 8px 5px !important;
+    }
+    
+    .stats-cards {
+        grid-template-columns: 1fr !important;
+    }
+    
+    .status-buttons {
+        flex-direction: column !important;
+        width: 100% !important;
+    }
+    
+    .status-btn {
+        width: 100% !important;
+    }
+}
+
+/* Tablet */
+@media (min-width: 577px) and (max-width: 768px) {
+    .admin-sidebar {
+        width: 220px !important;
+    }
+    
+    .admin-content {
+        margin-left: 220px !important;
+    }
+    
+    .services-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
+    
+    .stats-cards {
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
+}
+
+/* Small Desktop */
+@media (min-width: 769px) and (max-width: 992px) {
+    .services-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
+    
+    .stats-cards {
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
+}
+
+/* Medium Desktop */
+@media (min-width: 993px) and (max-width: 1200px) {
+    .services-grid {
+        grid-template-columns: repeat(3, 1fr) !important;
+    }
+    
+    .stats-cards {
+        grid-template-columns: repeat(3, 1fr) !important;
+    }
+}
+
+/* Large Desktop */
+@media (min-width: 1201px) {
+    .services-grid {
+        grid-template-columns: repeat(3, 1fr) !important;
+    }
+    
+    .stats-cards {
+        grid-template-columns: repeat(4, 1fr) !important;
+    }
+}
+
+/* ========== GENERAL IMPROVEMENTS ========== */
+
+/* Language switcher fixes */
+.lang-options {
+    display: none !important;
+    z-index: 10000 !important;
+}
+
+.lang-options.show {
+    display: block !important;
+}
+
+.lang-btn {
+    cursor: pointer !important;
+    pointer-events: auto !important;
+}
+
+.lang-option {
+    cursor: pointer !important;
+    pointer-events: auto !important;
+}
+
+.lang-option.active {
+    background: #667eea !important;
+    color: white !important;
+}
+
+.lang-option.active i.fa-check {
+    display: inline !important;
+}
+
+/* Remove all excessive animations */
+@keyframes fadeInDown, fadeInUp, fadeInLeft, fadeInRight, slideInLeft, slideInRight, bounceIn, pulse, rotate, float, modalFadeIn, slideDown, ripple, slideIn {
+    /* Disabled */
+}
+
+/* Smooth scrolling */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Better focus states */
+*:focus {
+    outline: 2px solid #667eea !important;
+    outline-offset: 2px !important;
+}
+
+button:focus, a:focus {
+    outline: 2px solid #667eea !important;
+    outline-offset: 2px !important;
+}
+
+/* Improve form inputs */
+input, select, textarea {
+    transition: border-color 0.2s, box-shadow 0.2s !important;
+}
+
+input:focus, select:focus, textarea:focus {
+    border-color: #667eea !important;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1) !important;
+}
+
+/* Better button hover states */
+button:hover {
+    transform: translateY(-1px) !important;
+}
+
+button:active {
+    transform: translateY(0) !important;
+}
+

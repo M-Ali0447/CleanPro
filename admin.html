@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CleanPro Admin Panel</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Адаптивные стили для админ-панели (Mobile-First подход) -->
+    <link rel="stylesheet" href="admin-responsive.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f5f7fa; }
+        
+        /* Login Page */
+        .login-container { display: flex; justify-content: center; align-items: center; min-height: 100vh; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .login-box { background: white; padding: 40px; border-radius: 15px; box-shadow: 0 15px 35px rgba(0,0,0,0.2); width: 100%; max-width: 400px; }
+        .login-logo { text-align: center; margin-bottom: 30px; }
+        .logo-icon { font-size: 50px; color: #667eea; margin-bottom: 15px; }
+        .login-box h2 { color: #333; margin-bottom: 10px; }
+        .login-box p { color: #666; font-size: 14px; }
+        
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; margin-bottom: 8px; font-weight: 600; color: #333; }
+        .form-control { width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 16px; transition: border-color 0.3s; }
+        .form-control:focus { outline: none; border-color: #667eea; }
+        
+        .btn { padding: 12px 24px; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; transition: all 0.3s; }
+        .btn-primary { background: #667eea; color: white; width: 100%; font-size: 16px; }
+        .btn-primary:hover { background: #5a67d8; transform: translateY(-2px); box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4); }
+        .btn-refresh { background: #48bb78; color: white; padding: 10px 20px; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; transition: all 0.3s; }
+        .btn-refresh:hover { background: #38a169; transform: translateY(-2px); }
+        
+        .error-message { color: #e53e3e; margin-top: 15px; text-align: center; display: none; }
+        .login-test-accounts { margin-top: 25px; padding-top: 20px; border-top: 1px solid #e0e0e0; font-size: 13px; }
+        .login-test-accounts h4 { margin-bottom: 10px; color: #333; }
+        .login-test-accounts p { margin: 5px 0; color: #666; }
+        
+        /* Admin Panel */
+        .admin-wrapper { display: flex; min-height: 100vh; }
+        .admin-sidebar { width: 280px; background: linear-gradient(180deg, #2d3748 0%, #1a202c 100%); color: white; padding: 20px 0; position: fixed; height: 100vh; overflow-y: auto; box-shadow: 2px 0 10px rgba(0,0,0,0.1); }
+        .sidebar-header { padding: 0 20px 20px; text-align: center; border-bottom: 2px solid rgba(102, 126, 234, 0.3); margin-bottom: 20px; }
+        .sidebar-header .logo-icon { color: #667eea; }
+        .sidebar-header h3 { margin-top: 10px; }
+        .admin-profile { padding: 20px; text-align: center; border-bottom: 1px solid #4a5568; margin-bottom: 20px; }
+        .admin-avatar { font-size: 40px; margin-bottom: 10px; }
+        .admin-role { background: linear-gradient(135deg, #48bb78 0%, #38a169 100%); padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; box-shadow: 0 2px 8px rgba(72, 187, 120, 0.3); }
+        
+        .sidebar-menu { list-style: none; }
+        .menu-item { display: flex; align-items: center; justify-content: space-between; padding: 12px 20px; color: #cbd5e0; text-decoration: none; transition: all 0.3s; cursor: pointer; border-left: 3px solid transparent; }
+        .menu-item:hover { background: #4a5568; color: white; border-left-color: #667eea; padding-left: 17px; }
+        .menu-item.active { background: linear-gradient(90deg, #667eea 0%, rgba(102, 126, 234, 0.2) 100%); color: white; border-left-color: #fff; font-weight: 600; }
+        .menu-item i { width: 20px; margin-right: 10px; }
+        .menu-item > span:first-of-type { display: flex; align-items: center; flex: 1; }
+        
+        .admin-content { flex: 1; margin-left: 280px; background: #f5f7fa; min-height: 100vh; }
+        
+        /* Mobile menu toggle */
+        #sidebarToggle { display: none; background: #667eea; color: white; border: none; padding: 10px; border-radius: 6px; cursor: pointer; font-size: 18px; }
+        
+        @media (max-width: 768px) {
+            #sidebarToggle { display: block; }
+            .admin-sidebar { transform: translateX(-100%); transition: transform 0.3s; }
+            .admin-sidebar.show { transform: translateX(0); }
+            .admin-content { margin-left: 0; }
+        }
+        .admin-header { background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%); padding: 20px 30px; box-shadow: 0 2px 15px rgba(0,0,0,0.08); display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid #667eea; }
+        .admin-header h1 { color: #2d3748; font-size: 24px; font-weight: 700; }
+        .current-time { background: #667eea; color: white; padding: 8px 16px; border-radius: 20px; font-weight: 600; font-size: 14px; }
+        
+        .section-content { display: none; padding: 30px; background: white; margin: 20px; border-radius: 15px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        .section-content.active { display: block; }
+        
+        .stats-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 30px; }
+        .stat-card { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 25px; border-radius: 15px; box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3); display: flex; align-items: center; color: white; transition: transform 0.3s; }
+        .stat-card:hover { transform: translateY(-5px); box-shadow: 0 12px 30px rgba(102, 126, 234, 0.4); }
+        .stat-card .stat-icon { color: white; }
+        .stat-card .stat-number { color: white; }
+        .stat-card h3 { color: rgba(255,255,255,0.9); font-size: 14px; margin-bottom: 8px; }
+        .stat-icon { font-size: 40px; margin-right: 20px; color: #667eea; }
+        .stat-number { font-size: 32px; font-weight: bold; color: #2d3748; }
+        
+        .table-responsive { overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.08); }
+        table tbody tr { transition: background 0.2s; }
+        table tbody tr:hover { background: #f8f9fa; }
+        th, td { padding: 15px; text-align: left; border-bottom: 1px solid #e0e0e0; }
+        th { background: #f7fafc; font-weight: 600; color: #4a5568; }
+        
+        .status-badge { padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+        .status-pending { background: #fef3c7; color: #d97706; }
+        .status-completed { background: #d1fae5; color: #065f46; }
+        .status-cancelled { background: #fee2e2; color: #991b1b; }
+
+        /* Badge for sidebar menu */
+        .badge {
+            display: inline-block;
+            background: #e53e3e;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 11px;
+            font-weight: 600;
+            margin-left: 8px;
+            min-width: 20px;
+            text-align: center;
+        }
+        
+        .action-buttons { display: flex; gap: 10px; }
+        .action-btn { padding: 8px; border: none; border-radius: 6px; cursor: pointer; font-size: 14px; }
+        .btn-edit { background: #667eea; color: white; }
+        .btn-delete { background: #e53e3e; color: white; }
+        .btn-logout { background: linear-gradient(135deg, #e53e3e 0%, #c53030 100%); color: white; width: 100%; padding: 12px; border-radius: 8px; transition: all 0.3s; box-shadow: 0 2px 8px rgba(229, 62, 62, 0.3); }
+        .btn-logout:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(229, 62, 62, 0.4); }
+        
+        .loading-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: none; justify-content: center; align-items: center; z-index: 9999; }
+        .loading-overlay.show { display: flex; }
+        .loader-content { background: white; padding: 30px; border-radius: 12px; text-align: center; }
+        .loader-spinner { width: 50px; height: 50px; border: 5px solid #f3f3f3; border-top: 5px solid #667eea; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 15px; }
+        
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        
+        .notification { position: fixed; top: 20px; right: 20px; padding: 15px 25px; background: #667eea; color: white; border-radius: 8px; z-index: 9999; transform: translateX(400px); transition: transform 0.3s; }
+        .notification.show { transform: translateX(0); }
+        .notification.success { background: #48bb78; }
+        .notification.error { background: #e53e3e; }
+        
+        /* Language Switcher Styles */
+        .lang-dropdown { position: relative; z-index: 1001; }
+        .lang-btn { cursor: pointer; position: relative; z-index: 1002; }
+        .lang-btn:hover { background: #5a67d8 !important; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4); }
+        .lang-options {
+            display: none;
+            position: absolute;
+            top: calc(100% + 5px);
+            right: 0;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            padding: 10px 0;
+            min-width: 180px;
+            z-index: 10000;
+        }
+        .lang-options.show { display: block !important; }
+        .lang-option {
+            width: 100%;
+            background: none;
+            border: none;
+            padding: 12px 20px;
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 14px;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .lang-option:hover { background: #f8f9fa !important; color: #667eea !important; padding-left: 25px !important; }
+        .lang-option.active { background: #667eea !important; color: white !important; }
+        .lang-option.active:hover { background: #5a67d8 !important; }
+        .lang-option.active i.fa-check { display: inline !important; }
+        .lang-option i.fa-check { display: none; }
+    </style>
+</head>
+<body>
+   <!-- Login Page -->
+<div id="loginPage" class="login-container" style="display: flex; justify-content: center; align-items: center; min-height: 100vh; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+    <div class="login-box" style="background: white; padding: 50px; border-radius: 20px; box-shadow: 0 20px 40px rgba(0,0,0,0.2); width: 100%; max-width: 450px;">
+        <div class="login-logo" style="text-align: center; margin-bottom: 40px;">
+            <div class="logo-icon" style="font-size: 60px; color: #667eea; margin-bottom: 20px;">
+                <i class="fas fa-shield-alt"></i>
+            </div>
+            <h2 style="color: #333; font-size: 2rem; margin-bottom: 10px;" data-translate="adminTitle">CleanPro Admin</h2>
+            <p style="color: #666;" data-translate="professionalAdmin">Professional ma'muriyat paneli</p>
+        </div>
+        
+        <form id="loginForm">
+            <div class="form-group" style="margin-bottom: 25px;">
+                <label style="display: block; margin-bottom: 10px; font-weight: 600; color: #333;" data-translate="username">👤 Login</label>
+                <input type="text" id="username" class="form-control" placeholder="admin" required style="padding: 15px; border: 2px solid #e0e0e0; border-radius: 10px; width: 100%; font-size: 1rem;">
+            </div>
+
+            <div class="form-group" style="margin-bottom: 25px;">
+                <label style="display: block; margin-bottom: 10px; font-weight: 600; color: #333;" data-translate="password">🔒 Parol</label>
+                <input type="password" id="password" class="form-control" placeholder="admin123" required style="padding: 15px; border: 2px solid #e0e0e0; border-radius: 10px; width: 100%; font-size: 1rem;">
+            </div>
+
+            <button type="submit" class="btn-primary" id="loginSubmitBtn" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 15px; border: none; border-radius: 10px; cursor: pointer; width: 100%; font-size: 1.2rem; font-weight: 600; transition: transform 0.3s;">
+                <i class="fas fa-sign-in-alt"></i> <span data-translate="loginButton">Kirish</span>
+            </button>
+        </form>
+        
+        <div id="loginError" class="error-message" style="color: #e53e3e; margin-top: 20px; text-align: center; display: none;"></div>
+        
+        <div class="login-test-accounts" style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #e0e0e0; font-size: 0.9rem;">
+            <h4 style="margin-bottom: 10px; color: #333;" data-translate="testAccounts">📝 Test hisoblar:</h4>
+            <p style="color: #666; margin: 5px 0;"><strong data-translate="username">Login:</strong> admin</p>
+            <p style="color: #666; margin: 5px 0;"><strong data-translate="password">Parol:</strong> admin123</p>
+        </div>
+    </div>
+</div> 
+    <!-- ========== ADMIN PANEL ========== -->
+    <div id="adminPanel" class="admin-wrapper" style="display: none;">
+        <aside class="admin-sidebar">
+            <div class="sidebar-header">
+                <div class="logo-icon"><i class="fas fa-spa"></i></div>
+                <h3>CleanPro</h3>
+                <p data-translate="adminPanelText">Admin Panel</p>
+            </div>
+            
+            <div class="admin-profile">
+                <div class="admin-avatar"><i class="fas fa-user-shield"></i></div>
+                <div class="admin-info">
+                    <h4 id="adminName">-</h4>
+                    <span class="admin-role" id="adminRole">-</span>
+                </div>
+            </div>
+            
+            <ul class="sidebar-menu">
+                <li><a class="menu-item active" data-section="dashboard"><i class="fas fa-tachometer-alt"></i> <span data-translate="dashboard">Dashboard</span></a></li>
+                <li><a class="menu-item" data-section="orders">
+                    <span><i class="fas fa-shopping-cart"></i> <span data-translate="orders">Buyurtmalar</span></span>
+                    <span class="badge" id="pendingOrdersBadge">0</span>
+                </a></li>
+                <li><a class="menu-item" data-section="reviews"><i class="fas fa-comments"></i> <span data-translate="reviews">Fikrlar</span></a></li>
+                <li><a class="menu-item" data-section="users"><i class="fas fa-users"></i> <span data-translate="users">Foydalanuvchilar</span></a></li>
+                <li><a class="menu-item" data-section="stats"><i class="fas fa-chart-bar"></i> <span data-translate="stats">Statistika</span></a></li>
+                <li id="adminManagementMenu" style="display: none;"><a class="menu-item" data-section="admins"><i class="fas fa-user-shield"></i> <span data-translate="admins">Adminlar</span></a></li>
+            </ul>
+
+            <div class="sidebar-footer">
+                <button onclick="logout()" class="btn btn-logout"><i class="fas fa-sign-out-alt"></i> <span data-translate="logout">Chiqish</span></button>
+            </div>
+        </aside>
+        
+        <main class="admin-content">
+            <header class="admin-header">
+                <div class="header-left" style="display: flex; align-items: center; gap: 15px;">
+                    <button id="sidebarToggle" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
+                    <h1 id="pageTitle">Dashboard</h1>
+                </div>
+                <!-- admin.html faylida header-right qismini shunday qiling: -->
+<div class="header-right" style="display: flex; align-items: center; gap: 20px;">
+    <!-- Language Switcher -->
+    <div class="lang-dropdown">
+        <button class="lang-btn" id="adminLangBtn" onclick="toggleLangDropdown()" style="background: #667eea; color: white; border: none; padding: 10px 20px; border-radius: 25px; font-weight: 600; display: flex; align-items: center; gap: 8px; transition: all 0.3s; cursor: pointer;">
+            <i class="fas fa-globe"></i> <span id="adminLangText">UZ</span> <i class="fas fa-chevron-down"></i>
+        </button>
+        <div class="lang-options" id="adminLangOptions" style="display: none;">
+            <button class="lang-option" data-lang="uz_latn" onclick="selectLanguage('uz_latn')" data-translate="langUzLatn">
+                <i class="fas fa-check"></i> <span>O'zbek (Lotin)</span>
+            </button>
+            <button class="lang-option" data-lang="uz_cyrl" onclick="selectLanguage('uz_cyrl')" data-translate="langUzCyrl">
+                <i class="fas fa-check"></i> <span>Ўзбек (Кирилл)</span>
+            </button>
+            <button class="lang-option" data-lang="ru" onclick="selectLanguage('ru')" data-translate="langRu">
+                <i class="fas fa-check"></i> <span>Русский</span>
+            </button>
+        </div>
+    </div>
+    <div class="current-time" id="currentTime"></div>
+</div>
+            </header>
+            
+            <!-- Dashboard -->
+            <section id="dashboardSection" class="section-content active">
+                <div class="stats-cards">
+                    <div class="stat-card">
+                        <div class="stat-icon"><i class="fas fa-shopping-cart"></i></div>
+                        <div class="stat-info">
+                            <h3 data-translate="totalOrders">Jami Buyurtmalar</h3>
+                            <div class="stat-number" id="totalOrders">0</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon"><i class="fas fa-comments"></i></div>
+                        <div class="stat-info">
+                            <h3 data-translate="totalReviews">Jami Fikrlar</h3>
+                            <div class="stat-number" id="totalReviews">0</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon"><i class="fas fa-users"></i></div>
+                        <div class="stat-info">
+                            <h3 data-translate="totalUsers">Foydalanuvchilar</h3>
+                            <div class="stat-number" id="totalUsers">0</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon"><i class="fas fa-clock"></i></div>
+                        <div class="stat-info">
+                            <h3 data-translate="pendingOrders">Kutilmoqda</h3>
+                            <div class="stat-number" id="pendingOrders">0</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="content-row">
+                    <div class="chart-container">
+                        <h3 data-translate="weeklyOrders">📊 So'nggi 7 kunlik buyurtmalar</h3>
+                        <div class="chart-body" style="height: 300px;"><canvas id="weeklyChart"></canvas></div>
+                    </div>
+                    <div class="recent-orders">
+                        <h3 data-translate="recentOrders">🆕 So'nggi Buyurtmalar</h3>
+                        <div class="table-responsive">
+                            <table>
+                                <thead><tr><th data-translate="id">ID</th><th data-translate="customer">Mijoz</th><th data-translate="phone">Telefon</th><th data-translate="service">Xizmat</th><th data-translate="status">Holat</th></tr></thead>
+                                <tbody id="recentOrdersTable"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Orders -->
+            <section id="ordersSection" class="section-content">
+                <div class="section-header">
+                    <h2><i class="fas fa-shopping-cart"></i> <span data-translate="allOrders">Barcha Buyurtmalar</span></h2>
+                    <div class="section-actions">
+                        <div class="search-box"><i class="fas fa-search"></i><input type="text" id="orderSearch" data-translate-placeholder="search" placeholder="Qidirish..."></div>
+                        <select id="orderFilter" class="filter-select">
+                            <option value="" data-translate="allStatuses">Barchasi</option>
+                            <option value="pending" data-translate="statusPending">Kutilmoqda</option>
+                            <option value="completed" data-translate="statusCompleted">Bajarildi</option>
+                            <option value="cancelled" data-translate="statusCancelled">Bekor qilindi</option>
+                        </select>
+                        <button class="btn btn-refresh" onclick="loadOrders()"><i class="fas fa-sync-alt"></i> <span data-translate="refresh">Yangilash</span></button>
+                    </div>
+                </div>
+                <div class="table-container">
+                    <table>
+                        <thead><tr>
+                            <th data-translate="id">ID</th>
+                            <th data-translate="customer">Mijoz</th>
+                            <th data-translate="phone">Telefon</th>
+                            <th data-translate="service">Xizmat</th>
+                            <th data-translate="date">Sana</th>
+                            <th data-translate="status">Holat</th>
+                            <th data-translate="actions">Amallar</th>
+                        </tr></thead>
+                        <tbody id="ordersTable"></tbody>
+                    </table>
+                </div>
+            </section>
+            
+            <!-- Reviews -->
+            <section id="reviewsSection" class="section-content">
+                <div class="section-header">
+                    <h2><i class="fas fa-comments"></i> <span data-translate="allReviews">Barcha Fikrlar</span></h2>
+                    <div class="section-actions">
+                        <div class="search-box"><i class="fas fa-search"></i><input type="text" id="reviewSearch" data-translate-placeholder="search" placeholder="Qidirish..."></div>
+                        <button class="btn btn-refresh" onclick="loadReviews()"><i class="fas fa-sync-alt"></i> <span data-translate="refresh">Yangilash</span></button>
+                    </div>
+                </div>
+                <div class="table-container">
+                    <table>
+                        <thead><tr>
+                            <th data-translate="id">ID</th>
+                            <th data-translate="name">Ism</th>
+                            <th data-translate="rating">Reyting</th>
+                            <th data-translate="review">Fikr</th>
+                            <th data-translate="date">Sana</th>
+                            <th data-translate="actions">Amallar</th>
+                        </tr></thead>
+                        <tbody id="reviewsTable"></tbody>
+                    </table>
+                </div>
+            </section>
+            
+            <!-- Users -->
+            <section id="usersSection" class="section-content">
+                <h2><i class="fas fa-users"></i> <span data-translate="users">Foydalanuvchilar</span></h2>
+                <div class="table-container">
+                    <table>
+                        <thead><tr>
+                            <th data-translate="id">ID</th>
+                            <th data-translate="name">Ism</th>
+                            <th data-translate="phone">Telefon</th>
+                            <th data-translate="ordersHeader">Buyurtmalar</th>
+                            <th data-translate="registered">Ro'yxatdan o'tgan</th>
+                        </tr></thead>
+                        <tbody id="usersTable"></tbody>
+                    </table>
+                </div>
+            </section>
+            
+            <!-- Statistics -->
+           <!-- admin.html faylida statsSection bo'limini shu bilan almashtiring: -->
+
+<!-- Statistics Section -->
+<section id="statsSection" class="section-content">
+    <div class="section-header">
+        <h2><i class="fas fa-chart-bar"></i> <span data-translate="stats">Statistika</span></h2>
+        <div class="section-actions">
+            <button class="btn btn-refresh" onclick="refreshStatistics()">
+                <i class="fas fa-sync-alt"></i> <span data-translate="refresh">Yangilash</span>
+            </button>
+            <button class="btn btn-primary" onclick="testStatistics()" style="background: #FFD700; color: #2E8B57;">
+                <i class="fas fa-vial"></i> <span data-translate="test">Test</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Charts Grid -->
+    <div class="stats-grid">
+        <!-- Services Chart -->
+        <div class="stat-chart">
+            <div class="chart-header">
+                <h3><i class="fas fa-list-alt"></i> <span data-translate="serviceStats">Xizmat turlari bo'yicha statistika</span></h3>
+                <div class="chart-actions">
+                    <small id="servicesChartInfo"></small>
+                </div>
+            </div>
+            <div id="servicesChartContainer" style="height: 350px; position: relative;">
+                <canvas id="servicesChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Status Chart -->
+        <div class="stat-chart">
+            <div class="chart-header">
+                <h3><i class="fas fa-chart-pie"></i> <span data-translate="statusStats">Buyurtmalar holati bo'yicha statistika</span></h3>
+                <div class="chart-actions">
+                    <small id="statusChartInfo"></small>
+                </div>
+            </div>
+            <div id="statusChartContainer" style="height: 350px; position: relative;">
+                <canvas id="statusChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Statistics Summary -->
+    <div class="stats-summary" style="margin-top: 30px; background: white; padding: 25px; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.05);">
+        <h3><i class="fas fa-info-circle"></i> <span data-translate="statisticsSummary">Statistika xulosasi</span></h3>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-top: 15px;">
+            <div class="stat-item">
+                <div class="stat-label" style="font-size: 14px; color: #666; margin-bottom: 5px;" data-translate="totalOrdersLabel">Jami buyurtmalar:</div>
+                <div class="stat-value" id="totalOrdersCount" style="font-size: 24px; font-weight: bold; color: #2E8B57;">0</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-label" style="font-size: 14px; color: #666; margin-bottom: 5px;" data-translate="pendingOrdersLabel">Kutilmoqda:</div>
+                <div class="stat-value" id="pendingOrdersCount" style="font-size: 24px; font-weight: bold; color: #FFD700;">0</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-label" style="font-size: 14px; color: #666; margin-bottom: 5px;" data-translate="completedOrdersLabel">Bajarildi:</div>
+                <div class="stat-value" id="completedOrdersCount" style="font-size: 24px; font-weight: bold; color: #2E8B57;">0</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-label" style="font-size: 14px; color: #666; margin-bottom: 5px;" data-translate="cancelledOrdersLabel">Bekor qilindi:</div>
+                <div class="stat-value" id="cancelledOrdersCount" style="font-size: 24px; font-weight: bold; color: #DC3545;">0</div>
+            </div>
+        </div>
+    </div>
+</section>
+            
+            <!-- Admin Management (Super Admin Only) -->
+            <!-- Admin Management (Super Admin Only) -->
+<section id="adminsSection" class="section-content">
+    <div class="section-header">
+        <h2><i class="fas fa-user-shield"></i> <span data-translate="adminsManagement">Adminlar Boshqaruvi</span></h2>
+        <div class="section-actions" id="adminActions">
+            <button class="btn btn-primary" onclick="showAddAdminModal()" style="background: #2E8B57; color: white; padding: 10px 20px; border: none; border-radius: 8px; cursor: pointer; font-size: 14px; margin: 0 5px;">
+                <i class="fas fa-plus"></i> <span data-translate="newAdmin">Yangi Admin</span>
+            </button>
+            <button class="btn btn-refresh" onclick="loadAdmins()"><i class="fas fa-sync-alt"></i> <span data-translate="refresh">Yangilash</span></button>
+        </div>
+    </div>
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th data-translate="id">ID</th>
+                    <th>Username</th>
+                    <th data-translate="name">Ism</th>
+                    <th>Email</th>
+                    <th data-translate="role">Rol</th>
+                    <th data-translate="created">Yaratilgan</th>
+                    <th style="min-width: 200px;" data-translate="actions">Amallar</th>
+                </tr>
+            </thead>
+            <tbody id="adminsTable"></tbody>
+        </table>
+    </div>
+</section>
+        </main>
+    </div>
+    
+    <!-- Add/Edit Admin Modal -->
+    <div id="adminModal" class="modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 10000; justify-content: center; align-items: center;">
+        <div class="modal-content" style="background: white; padding: 30px; border-radius: 15px; width: 90%; max-width: 500px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h3 id="modalTitle" data-translate="addNewAdmin">Yangi Admin Qo'shish</h3>
+                <button onclick="closeAdminModal()" style="background: none; border: none; font-size: 24px; cursor: pointer;">&times;</button>
+            </div>
+            <form id="adminForm">
+                <input type="hidden" id="adminId">
+                <div class="form-group" style="margin-bottom: 15px;">
+                    <label data-translate="usernameRequired">Username *</label>
+                    <input type="text" id="adminUsername" class="form-control" required>
+                </div>
+                <div class="form-group" style="margin-bottom: 15px;">
+                    <label data-translate="passwordRequired">Parol *</label>
+                    <input type="password" id="adminPassword" class="form-control" required>
+                </div>
+                <div class="form-group" style="margin-bottom: 15px;">
+                    <label data-translate="fullNameRequired">To'liq Ism *</label>
+                    <input type="text" id="adminFullName" class="form-control" required>
+                </div>
+                <div class="form-group" style="margin-bottom: 15px;">
+                    <label data-translate="emailOptional">Email</label>
+                    <input type="email" id="adminEmail" class="form-control">
+                </div>
+                <div class="form-group" style="margin-bottom: 20px;">
+                    <label data-translate="roleLabel">Rol</label>
+                    <select id="adminRole" class="form-control">
+                        <option value="admin" data-translate="admin">Admin</option>
+                        <option value="super_admin" data-translate="superAdmin">Super Admin</option>
+                    </select>
+                </div>
+                <div style="display: flex; gap: 10px;">
+                    <button type="submit" class="btn btn-primary" style="flex: 1; background: #667eea; color: white; padding: 12px; border: none; border-radius: 8px; cursor: pointer;">
+                        <span data-translate="save">Saqlash</span>
+                    </button>
+                    <button type="button" onclick="closeAdminModal()" class="btn" style="flex: 1; background: #e0e0e0; color: #333; padding: 12px; border: none; border-radius: 8px; cursor: pointer;">
+                        <span data-translate="cancel">Bekor qilish</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loader-content">
+            <div class="loader-spinner"></div>
+            <p data-translate="pleaseWait">Iltimos kuting...</p>
+        </div>
+    </div>
+
+    <script src="adminTranslations.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <!-- Адаптивные функции (мобильный сайдбар, прокрутка, и т.д.) -->
+    <script src="responsive-helpers.js"></script>
+    <script src="admin.js"></script>
+</body>
+</html>
